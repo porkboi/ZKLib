@@ -6,6 +6,11 @@ Authors: Quang Dao
 
 -- import Mathlib.Data.Matrix.Mul
 import Mathlib.RingTheory.MvPolynomial.Basic
+import Mathlib.Data.Matrix.Basic
+import Mathlib.Data.Matrix.Kronecker
+import Mathlib.Data.Vector.Basic
+import Mathlib.Data.Array.Basic
+import Mathlib.Data.Finset.Basic
 
 /-!
   # Multilinear Polynomials
@@ -202,6 +207,48 @@ def eval₂ (p : MlPoly R n) (f : R →+* S) (x : Vector S n) : S := eval (map f
 -- theorem eval_eq_eval_array (p : MlPoly R) (x : Array Bool) (h : x.size = p.nVars): eval p
 -- x.map (fun b => b) = p.evals.get! (x.foldl (fun i elt => i * 2 + elt) 0) := by unfold eval unfold
 -- dotProduct simp [↓reduceIte, h] sorry
+
+open matrix
+
+variables {α : Type*} [comm_ring α] [decidable_eq α]
+
+def hadamard_matrix : Π (n : ℕ), matrix (fin (2^n)) (fin (2^n)) ℝ
+| 0 := !![1]
+| (n+1) := let H := hadamard_matrix n in
+  from_blocks H H H (-H)
+
+def walsh_hadamard_transform (c : ℝ^(fin (2^n))) : ℝ^(fin (2^n)) :=
+  hadamard_matrix n ⬝ c
+
+def multilinear_polynomial_eval (c : ℝ^(fin (2^n))) (z : ℝ^n) : ℝ :=
+  ∑ b in finset.univ, c b * ∏ i, z i ^ (b i)
+
+theorem walsh_hadamard_eval (c : ℝ^(fin (2^n))) (z : ℝ^n) :
+  walsh_hadamard_transform c = multilinear_polynomial_eval c z :=
+begin
+  induction n with n ih,
+  {
+    simp [hadamard_matrix, walsh_hadamard_transform, multilinear_polynomial_eval],
+    refl },
+  {
+    simp [hadamard_matrix, walsh_hadamard_transform, multilinear_polynomial_eval],
+    let c₀ := λ b : fin (2^n), c (fin.append_bit0 b),
+    let c₁ := λ b : fin (2^n), c (fin.append_bit1 b),
+    have Hn := ih c₀ z,
+    have Hn' := ih c₁ z,
+    rw [Hn, Hn'],
+    simp [matrix.from_blocks, mul_vec],
+    ext i,
+    cases i using fin.cases with i₀ i₁,
+    {
+      simp [c₀, c₁, fin.append_bit0, fin.append_bit1],
+      rw [mul_add, mul_sub],
+      ring },
+    {
+      simp [c₀, c₁, fin.append_bit0, fin.append_bit1],
+      rw [mul_add, mul_sub],
+      ring } }
+end
 
 end MlPoly
 
