@@ -54,6 +54,18 @@ requiring each component to be complete from every deterministic state.
 The ordinary pure-verifier binary theorems have oracle-reduction wrappers in
 `Append/Completeness.lean`, using `OracleReduction.append_toReduction`.
 
+For guarded finite chains, import `Sequential/GuardedNary.lean` and use
+`seqCompose_completeness_of_guarded_verifiers`. Each component must have pure prover output,
+a guarded verifier form, and completeness from every deterministic state.
+`Sequential/OracleCompleteness.lean` supplies the binary and finite-chain oracle-reduction wrappers.
+
+With an empty ambient oracle, `Sequential/NoAmbient.lean` derives pure prover output by
+eliminating impossible queries. `Verifier.GuardedForm.ofEmpty` constructs a verifier form from
+an explicit fallback map `StmtIn → StmtOut`, used only on rejection. The map avoids imposing
+inhabitedness on arbitrary output oracle families; an always-rejecting verifier from `Unit` to
+`Empty` has no such form. `LiftContext/Purity.lean` transports output purity and guarded forms
+through ordinary context lifting.
+
 ## Round-by-round soundness
 
 `Verifier.append_rbrSoundnessWorstCase_of_pure_first` composes bounds that hold for each fixed
@@ -61,10 +73,9 @@ transcript prefix, under a pure first verifier. Each round retains its component
 `append_rbrSoundness_of_worst_case_of_pure_first` derives the prover-averaged conclusion from
 these hypotheses. Prover-averaged component bounds alone do not supply this contract.
 
-The fixed-initial-state completeness declarations in `Append/Security.lean` and
-`Sequential/General.lean` are false and remain admitted; use the proved completeness interfaces
-above. Generic soundness composition and the implication from round-by-round to ordinary
-soundness remain admitted.
+Generic soundness composition and the implication from round-by-round to ordinary soundness
+remain admitted. Sumcheck, Packing, and Binius use the proved completeness interfaces above;
+their completeness theorems still depend on separate component and context-lifting admissions.
 
 ## Clients and validation
 
@@ -77,5 +88,6 @@ Run `./scripts/validate.sh --axioms` for the library, compile-time tests, runtim
 axiom regression gate. `ArkLibTest/OracleReduction/Composition/Sequential/` covers challenge
 routing, rejecting verifiers, raw query-order failure, and the need for suffix correctness at
 the state left by the prefix. It also contains a simulated factorization example outside the
-raw execution conditions. Hachi's tests check its composed theorem dependencies; the default
+raw execution conditions. `RetiredCompleteness.lean` checks that the unsupported fixed-initial-state
+completeness names are absent. Hachi's tests check its composed theorem dependencies; the default
 runtime exercises bounded decomposition but does not execute the expensive complete opening run.

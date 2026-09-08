@@ -7,11 +7,14 @@ Authors: Quang Dao, scaraven
 import ArkLib.OracleReduction.Composition.Sequential.Append.Execution
 
 /-!
-  # Sequential Composition: Legacy Security Contracts
+# Admitted soundness composition contracts
 
-  Admitted composition contracts and their inherited oracle-reduction wrappers. The fixed-init
-  completeness contracts are false as stated and await caller migration and retirement.
-  Use the proved interfaces in `Append/Completeness.lean` and `Sequential/GuardedCompleteness.lean`.
+This module contains admitted soundness and knowledge-soundness composition contracts and their
+oracle-verifier wrappers. Execution and conversion equalities do not establish these contracts.
+
+For proved completeness interfaces, use `Append/Completeness.lean` and
+`Sequential/GuardedCompleteness.lean`. The proved soundness interface in `Append/RoundByRound.lean`
+requires fixed-prefix component bounds and a pure first verifier.
 -/
 
 open OracleComp OracleSpec SubSpec
@@ -25,25 +28,6 @@ section Security
 
 open scoped NNReal
 
-/-! ### Admitted security-composition boundary
-
-The execution and conversion equalities are proved, but they do not establish the generic
-security contracts below. The fixed-initial-state completeness claim is false, even with pure
-verifiers and pure left prover output: the suffix receives the state left by the prefix, while
-its standalone premise only covers the original initialization distribution.
-
-`AppendStateCounterexample.not_append_perfectCompleteness` is the kernel-checked witness in
-`ArkLibTest/OracleReduction/Composition/Sequential/SharedStateCounterexample.lean`.
-Both binary completeness contracts and their oracle wrappers await caller migration and
-retirement. Their current callers inherit `sorryAx`.
-
-The proved `Reduction.append_completeness_of_prover_factorization` requires exact simulated prover
-factorization, pure verifier forms, and suffix completeness from every deterministic shared state.
-Its seam/purity corollaries and the guarded-verifier variant supply convenient sufficient
-contracts. The separate fixed-prefix RBR theorem requires worst-case component bounds and a pure
-first verifier. None of these results discharges the legacy ordinary or knowledge-soundness claims.
-Standalone theorems with no dependency on these declarations remain outside this trust boundary. -/
-
 section Protocol
 
 variable {Stmt₁ Wit₁ Stmt₂ Wit₂ Stmt₃ Wit₃ : Type}
@@ -51,44 +35,6 @@ variable {Stmt₁ Wit₁ Stmt₂ Wit₂ Stmt₃ Wit₃ : Type}
     [∀ i, SampleableType (pSpec₁.Challenge i)] [∀ i, SampleableType (pSpec₂.Challenge i)]
     {σ : Type} {init : ProbComp σ} {impl : QueryImpl oSpec (StateT σ ProbComp)}
     {rel₁ : Set (Stmt₁ × Wit₁)} {rel₂ : Set (Stmt₂ × Wit₂)} {rel₃ : Set (Stmt₃ × Wit₃)}
-
-/-
-The fixed-init completeness contract needs correction, not merely a proof of query commutation.
-The proved APIs preserve the actual shared state and intermediate prover/verifier agreement.
-The declarations below remain only while their existing callers are migrated.
--/
-
-namespace Reduction
-
-/-- Admitted completeness contract with both components initialized from the same distribution.
-It is false in general: the suffix instead receives the state left by the prefix. -/
-theorem append_completeness
-    (R₁ : Reduction oSpec Stmt₁ Wit₁ Stmt₂ Wit₂ pSpec₁)
-    (R₂ : Reduction oSpec Stmt₂ Wit₂ Stmt₃ Wit₃ pSpec₂)
-    {completenessError₁ completenessError₂ : ℝ≥0}
-    (h₁ : R₁.completeness init impl rel₁ rel₂ completenessError₁)
-    (h₂ : R₂.completeness init impl rel₂ rel₃ completenessError₂) :
-      (R₁.append R₂).completeness init impl
-        rel₁ rel₃ (completenessError₁ + completenessError₂) := by
-  unfold completeness at h₁ h₂ ⊢
-  intro stmtIn witIn hRelIn
-  have h₁' := h₁ stmtIn witIn hRelIn
-  clear h₁
-  unfold Reduction.append Reduction.run
-  sorry
-
-/-- Admitted perfect completeness for appending reductions complete from the same initial
-distribution; false in general. -/
-theorem append_perfectCompleteness (R₁ : Reduction oSpec Stmt₁ Wit₁ Stmt₂ Wit₂ pSpec₁)
-    (R₂ : Reduction oSpec Stmt₂ Wit₂ Stmt₃ Wit₃ pSpec₂)
-    (h₁ : R₁.perfectCompleteness init impl rel₁ rel₂)
-    (h₂ : R₂.perfectCompleteness init impl rel₂ rel₃) :
-      (R₁.append R₂).perfectCompleteness init impl rel₁ rel₃ := by
-  dsimp [perfectCompleteness] at h₁ h₂ ⊢
-  convert Reduction.append_completeness R₁ R₂ h₁ h₂
-  simp only [add_zero]
-
-end Reduction
 
 namespace Verifier
 
@@ -116,27 +62,13 @@ theorem append_knowledgeSoundness
         rel₁ rel₃ (knowledgeError₁ + knowledgeError₂) := by
   sorry
 
-/-! ### Unresolved contracts for the RBR composition theorems below
+/-! ### Round-by-round composition assumptions
 
-The constructions above do not establish the generic statements below.
-
-**First-verifier determinism.** `Verifier.StateFunction.append` requires the first verifier to
-be pure and total, with a specified intermediate-statement function. The generic theorem below
-has no such hypothesis, so this constructor is not available directly for its arbitrary `V₁`.
-
-**Prover restriction and conditioning.** `rbrSoundness` quantifies over an arbitrary prover for
-`pSpec₁ ++ₚ pSpec₂`, while `h₁` / `h₂` quantify over component provers. A restriction argument
-would need to relate their `runToRound` distributions across `liftAppendLeft` / `liftAppendRight`.
-The suffix additionally depends on the random first-half transcript and actual shared state.
-Its input can be correlated with that state; a component bound under the original `init` does not
-by itself give the conditional bound needed after the prefix. These require an audit of the generic
-contract as well as a proof of any proposed restriction or conditioning lemmas.
-
-Under its pure, total first-verifier hypothesis, `Verifier.StateFunction.append` retains
-`S₁ (last m) ∨ S₂ (…)` past the seam. Every past-seam bad transition then carries `¬ S₁ (last m)`,
-which `verify_notMem_of_not_toFun` uses to establish `verify stmt tr₁ ∉ lang₂`.
-The challenge-transport lemmas `uniformSample_challenge_append_inl` / `_inr` are also proved.
-These ingredients alone do not discharge the missing hypotheses or conditional bounds. -/
+The generic contracts below remain admitted. The state-function constructor requires a pure,
+total first verifier, which these statements do not assume. A proof also needs compatible
+restrictions of the combined prover and bounds after conditioning on the first transcript and
+actual shared oracle state. Bounds under the original initialization distribution alone do not
+supply those conditional suffix bounds. -/
 
 /-- If two verifiers satisfy round-by-round soundness with compatible languages and respective RBR
     soundness errors, then their sequential composition also satisfies round-by-round soundness.
@@ -187,35 +119,6 @@ variable {Stmt₁ : Type} {ιₛ₁ : Type} {OStmt₁ : ιₛ₁ → Type} [Oₛ
     {rel₁ : Set ((Stmt₁ × ∀ i, OStmt₁ i) × Wit₁)}
     {rel₂ : Set ((Stmt₂ × ∀ i, OStmt₂ i) × Wit₂)}
     {rel₃ : Set ((Stmt₃ × ∀ i, OStmt₃ i) × Wit₃)}
-
-namespace OracleReduction
-
-/-- Admitted additive completeness for oracle reductions complete from the same initial
-distribution; false in general. -/
-theorem append_completeness
-    (R₁ : OracleReduction oSpec Stmt₁ OStmt₁ Wit₁ Stmt₂ OStmt₂ Wit₂ pSpec₁)
-    (R₂ : OracleReduction oSpec Stmt₂ OStmt₂ Wit₂ Stmt₃ OStmt₃ Wit₃ pSpec₂)
-    {completenessError₁ completenessError₂ : ℝ≥0}
-    (h₁ : R₁.completeness init impl rel₁ rel₂ completenessError₁)
-    (h₂ : R₂.completeness init impl rel₂ rel₃ completenessError₂) :
-      (R₁.append R₂).completeness init impl
-        rel₁ rel₃ (completenessError₁ + completenessError₂) := by
-  unfold completeness
-  convert Reduction.append_completeness R₁.toReduction R₂.toReduction h₁ h₂
-  simp only [append_toReduction]
-
-/-- Admitted perfect completeness for appending oracle reductions complete from the same
-initial distribution; false in general. -/
-theorem append_perfectCompleteness
-    (R₁ : OracleReduction oSpec Stmt₁ OStmt₁ Wit₁ Stmt₂ OStmt₂ Wit₂ pSpec₁)
-    (R₂ : OracleReduction oSpec Stmt₂ OStmt₂ Wit₂ Stmt₃ OStmt₃ Wit₃ pSpec₂)
-    (h₁ : R₁.perfectCompleteness init impl rel₁ rel₂)
-    (h₂ : R₂.perfectCompleteness init impl rel₂ rel₃) :
-      (R₁.append R₂).perfectCompleteness init impl rel₁ rel₃ := by
-  change (R₁.append R₂).completeness init impl rel₁ rel₃ 0
-  simpa only [zero_add] using OracleReduction.append_completeness R₁ R₂ h₁ h₂
-
-end OracleReduction
 
 namespace OracleVerifier
 

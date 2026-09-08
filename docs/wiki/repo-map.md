@@ -632,10 +632,15 @@ home_page/            site assets and assembled website root
     with seam and purity corollaries and state-uniform suffix correctness.
   - `Append/OneMessage.lean` — the one-message specialization with effectful prover outputs.
   - `Append/RoundByRound.lean` — composition from fixed-prefix bounds under a pure first verifier.
-  - `Append/Security.lean` — the legacy completeness and soundness claims, still admitted.
+  - `Append/Security.lean` — admitted soundness and knowledge-soundness composition claims.
 
   `Sequential/Completeness.lean` adds finite-chain completeness for pure outputs/verdicts;
   `Sequential/GuardedCompleteness.lean` handles deterministic rejecting verifiers.
+  `Sequential/GuardedNary.lean` extends guarded completeness to finite chains;
+  `Sequential/OracleCompleteness.lean` supplies binary and finite-chain oracle-reduction wrappers.
+  `Sequential/NoAmbient.lean` proves output purity for empty ambient oracles and constructs guarded
+  forms from explicit fallback maps. `LiftContext/Purity.lean` transports output purity and guarded
+  forms through context lifting.
   See [sequential composition](sequential-composition.md) for theorem selection and hypotheses.
   `ArkLibTest/OracleReduction/Composition/Sequential/` contains acceptance examples, query-order
   and shared-state counterexamples, and axiom assertions, built by `lake test`.
@@ -647,8 +652,10 @@ home_page/            site assets and assembled website root
   rather than re-deriving them privately per module.
 - Virtual-output execution commutes through append, salt, cast, and executable lifting. This does
   not close the inherited generic append-security boundary: the unrestricted `StateT`
-  completeness/soundness composition theorems in `Composition/Sequential/Append/Security.lean`
-  remain admitted and must not anchor a standalone security claim.
+  soundness and knowledge-soundness composition theorems in
+  `Composition/Sequential/Append/Security.lean` remain admitted and must not anchor a standalone
+  security claim. Completeness composition uses the proved interfaces with explicit shared-state
+  hypotheses.
 - Ring switching is a **family of constructions, not one protocol** — the umbrella
   `ProofSystem/RingSwitching/Basic.lean` carries the taxonomy over two construction folders.
   `Packing/` is the small→large packing family: `Profile.lean` holds the shared
