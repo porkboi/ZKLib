@@ -277,6 +277,7 @@ import ArkLib.Data.Polynomial.RationalFunctions.HenselNumerators.Weight
 import ArkLib.Data.Polynomial.RationalFunctions.Lifts
 import ArkLib.Data.Polynomial.RationalFunctions.RationalRootVanishing
 import ArkLib.Data.Polynomial.RationalFunctions.Weight
+import ArkLib.Data.Polynomial.ResultantDegree
 import ArkLib.Data.Polynomial.SplitFold
 import ArkLib.Data.Polynomial.SymbolicInterpolationParameters
 import ArkLib.Data.Polynomial.SymbolicInterpolationSupport
