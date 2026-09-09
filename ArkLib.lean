@@ -284,6 +284,7 @@ import ArkLib.Data.Polynomial.SymbolicInterpolationParameters
 import ArkLib.Data.Polynomial.SymbolicInterpolationSupport
 import ArkLib.Data.Polynomial.SymbolicInterpolationSurplus
 import ArkLib.Data.Polynomial.Trivariate
+import ArkLib.Data.Polynomial.UniversalHenselNumerator
 import ArkLib.Data.Probability.Combinatorial
 import ArkLib.Data.Probability.Instances
 import ArkLib.Data.Probability.KoalaBear
