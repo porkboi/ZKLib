@@ -169,6 +169,20 @@ perfect-completeness theorem permits history-dependent challenge programs but as
 probability for every round and public history; the measure and uniform theorems specialize that
 assumption. These results do not establish arbitrary-round soundness, extraction, transcript
 privacy, or independence for the general sampled challenges.
+## Source logs and persistent world execution
+
+`LoggedResult.sourceLog` and `LoggedRun.sourceLog` record answered source/access queries in order.
+`Verifier.loggedLiftAccessImpl` lifts access interpretation and appends an entry after a source
+query returns. Ambient queries remain in the open program and do not become source-log entries.
+Earlier local source queries are routed into the final access signature; duplicates remain present.
+The source log records verifier execution, not subsequent mathematical closing queries.
+
+`executeLogged` pairs that log with the actual core result. Its erasure theorem is equality of open
+programs, preserving order without assuming a commutative world. `executeWithRuntime` initializes
+one persistent world and returns the logged run, final world state, and world-interface query log.
+The source log and world log observe different interfaces. Neither a returned record nor a log
+alone establishes generation; support or the runtime's `GeneratedBy` relation supplies provenance.
+
 ## Concrete prefixes and available contexts
 
 `ExecutionPrefix` pairs a structural cursor with exactly the concrete oracle messages already
@@ -247,6 +261,8 @@ unchanged. For named contexts and their views, replace old `tensor` uses by `dis
 | `TypeTree.FullPrefix` | `TypeTree.ExecutionPrefix` |
 | Prefix `resources`, `resourceInclusion` | `availableContext`, `contextInclusion` |
 | Prefix `no_future` | `available_length_le` |
+| Logged `deltaTrace` | `sourceLog` |
+| `Verifier.loggedReadImpl`, `loggedReadImpl_erase` | `loggedLiftAccessImpl`, `loggedLiftAccessImpl_erase` |
 | `ProverOutputRealizes`, `proverOutputRealizes_iff` | `ConcreteClaim.closesTo`, `closesTo_iff` |
 | `ClaimSchema`, `ClaimSchema.oracle` | `ClaimFamily`, `ClaimFamily.closedOracle` |
 | Claim `rebase`, `closeWith_rebase` | `mapSource`, `closeWith_mapSource` |

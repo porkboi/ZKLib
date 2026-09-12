@@ -296,10 +296,13 @@ public import ArkLib.Interaction.Oracle.Claim
 public import ArkLib.Interaction.Oracle.Composition
 public import ArkLib.Interaction.Oracle.CoreRun
 public import ArkLib.Interaction.Oracle.Execution
+public import ArkLib.Interaction.Oracle.LoggedExecution
+public import ArkLib.Interaction.Oracle.LoggedRun
 public import ArkLib.Interaction.Oracle.Prefix
 public import ArkLib.Interaction.Oracle.Protocol
 public import ArkLib.Interaction.Oracle.Resource
 public import ArkLib.Interaction.Oracle.RunSources
+public import ArkLib.Interaction.Oracle.Runtime
 public import ArkLib.Interaction.Oracle.Source
 public import ArkLib.Interaction.Oracle.TypeTree
 public import ArkLib.Interaction.Oracle.TypeTree.Decoration

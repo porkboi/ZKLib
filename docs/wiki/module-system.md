@@ -106,6 +106,19 @@ A per-declaration `@[expose]` *inside* a blanket exposed section is a warning
 (`Redundant [expose] attribute`, `@[expose] has no effect ...`), and therefore a CI failure. Tighten
 exposure only after the blanket section is removed.
 
+### Public producers with private constructors
+
+A public data type may retain a private constructor when its supported producers must control
+how fields are paired. Under the blanket exposed section, mark each producer whose implementation
+uses that constructor with `@[no_expose]`. The producer remains public, but its implementation is
+not exported. Do the same for private implementation helpers used by these producers.
+
+Prove public equations and erasure laws in the defining module. A downstream proof that must
+unfold an unexposed producer can add `import all` for that exact defining module, alongside its
+ordinary public import. This grants proof-time access; it does not make the constructor public or
+turn constructor privacy into a reachability or provenance theorem. The logged interaction
+executors demonstrate this pattern while their classic acceptance clients still check computation.
+
 ## Working in a module file
 
 ### What each piece of the header does

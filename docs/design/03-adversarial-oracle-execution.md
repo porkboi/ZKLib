@@ -38,7 +38,7 @@ def executeCore … : OracleComp Γ.Surface ((path : _) × CoreRun path)
 
 structure LoggedRun (path : _) where
   core       : CoreRun path
-  deltaTrace : QueryLog (srcSpecAt shared path)
+  sourceLog : QueryLog (srcSpecAt shared path)
 
 def executeLogged … : OracleComp Γ.Surface ((path : _) × LoggedRun path)
 
@@ -53,7 +53,7 @@ abbrev ExecutionArtifact := RuntimeArtifact Γ ((path : _) × LoggedRun path)
 security-game experiment belong to AR-9A. Pairing prevents accidental split-part use in supported
 games; it is not a nominal run identifier or a proof of sampling provenance.
 
-Derived projections: `closingEnv` (from one `CoreRun`'s `inputEnv`+`msgs`), `closed`, and `VerifierLocalView` — defined **from the enclosing `LoggedRun.deltaTrace`** (Δ-queries are not in the Γ trace; recovering the view by replay would need a determinism theorem, so it is logged, not asserted), extractor views, RBR prefixes, compiler traces. Probability is the evaluation distribution of the VCVio runtime runner. Missing `SPMF` mass retains VCVio's existing failure/nontermination meaning; explicit protocol `fault` is a returned value. Terminal decoding either proves `NeverFail` or invokes the one named VCVio outcome materialization.
+Derived projections: `closingEnv` (from one `CoreRun`'s `inputEnv`+`msgs`), `closed`, and `VerifierLocalView` — defined **from the enclosing `LoggedRun.sourceLog`** (Δ-queries are not in the Γ trace; recovering the view by replay would need a determinism theorem, so it is logged, not asserted), extractor views, RBR prefixes, compiler traces. Probability is the evaluation distribution of the VCVio runtime runner. Missing `SPMF` mass retains VCVio's existing failure/nontermination meaning; explicit protocol `fault` is a returned value. Terminal decoding either proves `NeverFail` or invokes the one named VCVio outcome materialization.
 
 Define `WorldTrace Γ` only as the named view/alias of `QueryLog Γ.Surface` equipped with ArkLib
 named-context routing; it is not a parallel carrier. **Four execution records, never
