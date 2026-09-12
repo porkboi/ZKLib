@@ -132,6 +132,15 @@ arbitrary concrete claims. `legacy_honest_verifier_correspondence` is narrower: 
 executions. The legacy verifier reads the input polynomial for its next target, while the typed
 verifier reads the sent polynomial. Their arbitrary-message executions are not identified.
 
+## Consecutive multivariate rounds
+
+`MultivariateRound.polynomialFamily` declares the persistent multivariate evaluation interface.
+Its `outputOracle` retains the supplied input behavior, while each round's newly sent univariate
+polynomial supplies the sum check and next target. The two-round executor passes the first actual
+closed claim to the second and skips the second after rejection. Sampled equations preserve the
+first-then-second challenge order. Completeness transports the multivariate relation through both
+rounds; it does not compose the one-round soundness error.
+
 ## Other interaction names
 
 `RoleDecoration.toExplicitRoles` fills the implicit sender role at oracle nodes while retaining
@@ -183,6 +192,7 @@ unchanged. For named contexts and their views, replace old `tensor` uses by `dis
 | `CoreRun.closed_eq_data_iff` | `CoreRun.closed_eq_concrete_iff` |
 | Single-round `degreeCatalog`, `honestData` | `degreeModel`, `honestClaim` |
 | Single-round `outputView`, `projectionView` | `outputOracle`, `projectionOracle` |
+| Multivariate-round `family`, `outputView` | `polynomialFamily`, `outputOracle` |
 | `executeSampled_measure_complete` | `executeSampled_measureCompleteness` |
 | Soundness `*_measure_soundness` | `*_measureSoundness` |
 | `legacy_verifier_correspondence` | `legacy_honest_verifier_correspondence` |
