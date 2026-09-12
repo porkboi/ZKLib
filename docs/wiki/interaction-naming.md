@@ -103,6 +103,20 @@ return. `CoreRun.closed` interprets only with its stored input behavior and path
 no separate handler. `closed_eq_concrete_iff` characterizes agreement with a concrete claim by
 statement and observable-answer equality, without asserting honesty or relation membership.
 
+## Ordered execution interfaces
+
+`ExecutionInterface` names a stage boundary by its public statement type, exported oracle
+`Index` and `Realization` types, `oracles`, and separate private state. A `ClosedStage` selects its
+protocol and reduction from the current public statement, derives its witness from the private
+state, and computes the next private state from the actual execution path and accepted output.
+`OrderedExecution` runs these stages in order and stops on rejection.
+
+The invariant theorems require preservation at every stage. Their probabilistic forms require
+almost-sure acceptance and invariant preservation; the measure bridge additionally assumes the
+stated discrete response spaces and agreement between the query measures and their probability
+mass functions. These interfaces and theorems do not by themselves assert execution provenance,
+noninterference of values captured when constructing a stage, or a security composition theorem.
+
 `TypeTree.sourceAfter` is one source context for the final accumulated access signature. Its
 environment contains the initial handler and the messages along that branch. It does not choose
 messages for unvisited branches or assert that arbitrary structural paths are inhabited.
@@ -200,6 +214,8 @@ unchanged. For named contexts and their views, replace old `tensor` uses by `dis
 | `ClaimSchema`, `ClaimSchema.oracle` | `ClaimFamily`, `ClaimFamily.closedOracle` |
 | Claim `rebase`, `closeWith_rebase` | `mapSource`, `closeWith_mapSource` |
 | Claim `substWith`, `closeWith_substWith` | `substWithSuffix`, `closeWith_substWithSuffix` |
+| `ExecutionInterface.Idx`, `ExecutionInterface.Obj` | `ExecutionInterface.Index`, `ExecutionInterface.Realization` |
+| `ExecutionInterface.Out` | `ExecutionInterface.oracles` |
 
 For virtual oracles, rename old `mapSource` uses to `substSource` before renaming `rebase` to
 `mapSource`. Apply the same substitutions to associated theorem names and explicit `Tree` named arguments
