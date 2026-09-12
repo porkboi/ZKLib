@@ -90,6 +90,23 @@ it to closed oracle claims. `Problem` adds claim-dependent witnesses, admissibil
 that entails admissibility. `language` existentially quantifies the witness. `Relation` removes the
 admissibility restriction; it does not assert that every claim has a witness.
 
+## Execution data and closing
+
+`CoreRun` stores a concrete path, initial behavior, private output, and the terminal open claim.
+`executeCore` packages these from the existing executor. The public carrier also admits algebraic
+normal forms; an executor equation, interpreted support, or a runtime generation witness supplies
+provenance when a theorem needs it. Constructor visibility is an API discipline, not that witness.
+
+`TerminalClaim` is the optional-claim convention at a completed branch: `some` carries a claim and
+`none` denotes verifier rejection. It does not represent failure of the ambient computation to
+return. `CoreRun.closed` interprets only with its stored input behavior and path messages, accepting
+no separate handler. `closed_eq_concrete_iff` characterizes agreement with a concrete claim by
+statement and observable-answer equality, without asserting honesty or relation membership.
+
+`TypeTree.sourceAfter` is one source context for the final accumulated access signature. Its
+environment contains the initial handler and the messages along that branch. It does not choose
+messages for unvisited branches or assert that arbitrary structural paths are inhabited.
+
 ## Other interaction names
 
 `RoleDecoration.toExplicitRoles` fills the implicit sender role at oracle nodes while retaining
@@ -137,6 +154,8 @@ unchanged. For named contexts and their views, replace old `tensor` uses by `dis
 | `VirtualOracle.rebase` (`SourceHom` argument) | `VirtualOracle.mapSource` |
 | `VirtualOracle.tensorWeaken`, `substWith` | `sumWeaken`, `substWithSuffix` |
 | `OracleClaim`, `DataClaim` | `OpenClaim`, `ConcreteClaim` |
+| `TypeTree.sourcesAfter`, `sourcesAfter_handler` | `sourceAfter`, `sourceAfter_handler` |
+| `CoreRun.closed_eq_data_iff` | `CoreRun.closed_eq_concrete_iff` |
 | `ProverOutputRealizes`, `proverOutputRealizes_iff` | `ConcreteClaim.closesTo`, `closesTo_iff` |
 | `ClaimSchema`, `ClaimSchema.oracle` | `ClaimFamily`, `ClaimFamily.closedOracle` |
 | Claim `rebase`, `closeWith_rebase` | `mapSource`, `closeWith_mapSource` |

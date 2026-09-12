@@ -173,19 +173,21 @@ query behavior.
 
 ### AR-6A — open and closed claims
 
-**Goal.** Define open claims carrying virtual plans and closed claims carrying extensional behavior.
-Closing interprets every plan with one supplied handler. Relations consume only closed claims.
+**Goal.** Define open claims carrying virtual programs and closed claims carrying extensional behavior.
+Closing interprets every program with one supplied handler. Relations consume only closed claims.
 
 **Acceptance.** A relation cannot inspect derivation history, and closing commutes with virtual
 substitution.
 
 ### AR-6B — core execution and run-derived closing
 
-**Goal.** Define the smallest trace-free `CoreRun` that pairs one execution's concrete resources
-with its virtual output claim. Its constructor remains controlled by execution.
+**Goal.** Define the smallest trace-free `CoreRun` that stores the path, input behavior, private
+output, and virtual output claim used by closing. The carrier is public; `executeCore` packages its
+own returned values, and executor equations or interpreted support establish their common origin.
 
-**Acceptance.** The public API cannot close one run's claim with another run's handler. Existing
-oracle-output agreement is recovered as a derived theorem.
+**Acceptance.** `CoreRun.closed` accepts no replacement handler. Arbitrary records are not evidence
+of execution, reachability, or probability. Concrete-output agreement is recovered as a derived
+interpretation theorem; security experiments use the executor's distribution.
 
 ### AR-7 — one-round Sumcheck through closing
 

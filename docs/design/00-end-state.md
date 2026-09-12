@@ -130,10 +130,12 @@ The design deliberately tracks both layers.
   commitments, and openings.
 - The **virtual layer** contains source-scoped query programs describing the oracle behavior a
   claim exposes.
-- A runner-produced artifact relates them: the security-game API consumes the paired output of one
-  execution and does not expose a constructor from independently supplied parts. This prevents
-  accidental mixing by construction of the experiment; it does not claim that two executions have
-  different Lean types or that malicious Lean code cannot fabricate values.
+- A runner-produced artifact relates them: security experiments consume the paired output of one
+  execution. The current trace-free `CoreRun` is a public data carrier and permits pure normal forms.
+  Its `closed` operation takes no replacement handler, but the record alone does not prove that its
+  fields arose together. Executor equations, interpreted support, or runtime generation evidence
+  establish provenance. Later private wrappers provide encapsulation, not distinct types for runs
+  or an independent proof that an execution occurred.
 - Compilation transforms real resources and transfers virtual guarantees into cryptographic
   obligations. It does not erase the distinction.
 
@@ -172,7 +174,7 @@ Fixed design principles:
 
 Still provisional until Lean clients elaborate:
 
-- exact universes and field layouts of `OracleFamily`, `SourceCtx`, `ClaimWith`, and `RunCore`;
+- exact universes and field layouts of `OracleFamily`, `SourceCtx`, `ClaimWith`, and `CoreRun`;
 - the final `NamedContext` and stable-name representation;
 - compiler plan and backend capability field names;
 - whether existing `TypeTree.Chain` is sufficient for n-ary reduction presentation.
