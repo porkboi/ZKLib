@@ -63,10 +63,10 @@ variable (h_l : ℓ = ℓ' + κ)
 variable [hdiv : Fact (ϑ ∣ ℓ')]
 
 /-- The Binius ring-switching profile, built from the boolean-hypercube basis derived from `β`.
-Kept defeq to `binaryTowerProfile … (booleanHypercubeBasis …)` so all downstream RingSwitching
+Kept defeq to `tensorProductProfile … (booleanHypercubeBasis …)` so all downstream RingSwitching
 semantics and axioms are preserved. -/
 def biniusProfile : RingSwitching.RingSwitchingProfile K L κ :=
-  RingSwitching.binaryTowerProfile κ K L (booleanHypercubeBasis κ L K β)
+  RingSwitching.tensorProductProfile κ K L (booleanHypercubeBasis κ L K β)
 
 section SumcheckFold
 
