@@ -296,6 +296,7 @@ public import ArkLib.Interaction.Oracle.Claim
 public import ArkLib.Interaction.Oracle.Composition
 public import ArkLib.Interaction.Oracle.CoreRun
 public import ArkLib.Interaction.Oracle.Execution
+public import ArkLib.Interaction.Oracle.Prefix
 public import ArkLib.Interaction.Oracle.Protocol
 public import ArkLib.Interaction.Oracle.Resource
 public import ArkLib.Interaction.Oracle.RunSources

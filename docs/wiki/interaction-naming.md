@@ -169,6 +169,22 @@ perfect-completeness theorem permits history-dependent challenge programs but as
 probability for every round and public history; the measure and uniform theorems specialize that
 assumption. These results do not establish arbitrary-round soundness, extraction, transcript
 privacy, or independence for the general sampled challenges.
+## Concrete prefixes and available contexts
+
+`ExecutionPrefix` pairs a structural cursor with exactly the concrete oracle messages already
+sent. It is a concrete partial traversal carrying the same data as an `ExecutionPath` up to its cursor;
+it need not admit a completion and does not prove support under a strategy. Its `Extends` witness retains public choices and hidden messages;
+forgetting to `Cursor.Extends` retains only structural agreement.
+
+`availableContext` names input oracles and oracle-send occurrences crossed before the cursor.
+It does not allocate realizations. `contextInclusion` preserves those names under structural
+extension, and `available_length_le` bounds an available occurrence by the stopping position.
+Availability alone carries no strategy, probability, cryptographic promise, or runtime witness.
+
+Prefix `comp` follows PolyFun cursor composition: first the left prefix, then its continuation.
+It preserves concrete message order, and `plug` completes the prefix with a residual execution path.
+These operations neither reorder effects nor select messages for unvisited branches.
+
 
 ## Other interaction names
 
@@ -228,6 +244,9 @@ unchanged. For named contexts and their views, replace old `tensor` uses by `dis
 | `executeRounds_uniform_measure_complete` | `executeRounds_uniform_measureCompleteness` |
 | Soundness `*_measure_soundness` | `*_measureSoundness` |
 | `legacy_verifier_correspondence` | `legacy_honest_verifier_correspondence` |
+| `TypeTree.FullPrefix` | `TypeTree.ExecutionPrefix` |
+| Prefix `resources`, `resourceInclusion` | `availableContext`, `contextInclusion` |
+| Prefix `no_future` | `available_length_le` |
 | `ProverOutputRealizes`, `proverOutputRealizes_iff` | `ConcreteClaim.closesTo`, `closesTo_iff` |
 | `ClaimSchema`, `ClaimSchema.oracle` | `ClaimFamily`, `ClaimFamily.closedOracle` |
 | Claim `rebase`, `closeWith_rebase` | `mapSource`, `closeWith_mapSource` |
