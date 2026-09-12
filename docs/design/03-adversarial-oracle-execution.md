@@ -75,7 +75,11 @@ Quantifier order is part of a notion's identity and its **name**. The registry (
 - **Adaptive vs. static:** `H ← O; (x, π) ← A^H` vs. `x` fixed before sampling. Both constructors provided; NARG-level defaults to adaptive (CY).
 - **Phased games**: PolyFun supplies generic machine wiring. Ordinary VCVio oracle phases sequence
   monadic execution while threading the stateful handler and accumulating one ordered query log.
-  The missing reusable execution artifact must package that state and the phase boundaries; generic
+  `PhasedRun` now retains the input behavior, path, source observations, and world-phase boundaries;
+  its runtime runner adds persistent state. Optional and explicit-fault closing use that same input
+  and path, with branch-indexed equations against `executeCore` and `executeTerminal`. Query-profile
+  additivity counts the supplied world-surface classification; its connection to available named
+  contexts and security budgets remains an obligation. Generic
   `DynSystem.Prefix` concatenation is needed only if a later operational-machine client cannot use
   the monadic route. ArkLib defines the commit/open or five-phase adversary game. Preprocessing keeps
   the *honest indexer inside the same runtime* between adversary phases.

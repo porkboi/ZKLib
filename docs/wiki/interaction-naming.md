@@ -218,6 +218,27 @@ It preserves concrete message order, and `plug` completes the prefix with a resi
 These operations neither reorder effects nor select messages for unvisited branches.
 
 
+## Phases, closing, and query profiles
+
+`WorldSegments` partitions the ordered world-interface log by actual local actions.
+`WorldPhase` labels each region with its party and concrete execution-prefix boundary, from
+which `availableContext` derives the names available there. `contextInclusion` preserves these
+names at the final boundary. Setup is a separate initial phase; repeated queries remain present.
+
+`PhasedRun` retains the same execution's input behavior, concrete path, participant outputs,
+source log, and world segments. Its optional `closed` and explicit-outcome `terminalClosed`
+interpret accepted claims with that stored behavior and path. Rejection and exact returned faults
+are preserved. The branch-indexed `closedResult` and `terminalClosedResult` expose this output
+without losing its dependent branch type. Their executor equations agree with `executeCore`
+and `executeTerminal` as open computations; they do not replay the verifier or substitute an
+unrelated handler. Runtime execution additionally returns the persistent world's final state.
+
+`queryProfile` counts world-interface queries under one supplied classification, and
+`queryProfiles_sum` proves that the phase counts add to the whole log's count. The classifier is
+not yet linked to `availableContext`; these equations establish neither permitted access nor a
+cost bound. Handler-internal work is outside this surface log. Runtime `GeneratedBy` or support
+hypotheses remain necessary when a theorem asserts that a record came from execution.
+
 ## Other interaction names
 
 `RoleDecoration.toExplicitRoles` fills the implicit sender role at oracle nodes while retaining
@@ -279,6 +300,8 @@ unchanged. For named contexts and their views, replace old `tensor` uses by `dis
 | `TypeTree.FullPrefix` | `TypeTree.ExecutionPrefix` |
 | Prefix `resources`, `resourceInclusion` | `availableContext`, `contextInclusion` |
 | Prefix `no_future` | `available_length_le` |
+| Phase `profile`, `profile_sum` | `queryProfile`, `queryProfile_sum` |
+| `PhasedRun.profiles_sum` | `PhasedRun.queryProfiles_sum` |
 | Logged `deltaTrace` | `sourceLog` |
 | `Verifier.loggedReadImpl`, `loggedReadImpl_erase` | `loggedLiftAccessImpl`, `loggedLiftAccessImpl_erase` |
 | `ProverOutputRealizes`, `proverOutputRealizes_iff` | `ConcreteClaim.closesTo`, `closesTo_iff` |
