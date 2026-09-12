@@ -304,6 +304,9 @@ public import ArkLib.Interaction.Oracle.Resource
 public import ArkLib.Interaction.Oracle.RunSources
 public import ArkLib.Interaction.Oracle.Runtime
 public import ArkLib.Interaction.Oracle.Source
+public import ArkLib.Interaction.Oracle.Terminal
+public import ArkLib.Interaction.Oracle.TerminalMeasure
+public import ArkLib.Interaction.Oracle.TerminalRun
 public import ArkLib.Interaction.Oracle.TypeTree
 public import ArkLib.Interaction.Oracle.TypeTree.Decoration
 public import ArkLib.Interaction.Oracle.Virtual

@@ -183,6 +183,24 @@ one persistent world and returns the logged run, final world state, and world-in
 The source log and world log observe different interfaces. Neither a returned record nor a log
 alone establishes generation; support or the runtime's `GeneratedBy` relation supplies provenance.
 
+## Returned outcomes and missing mass
+
+`Terminal Claim Fault` is the sum of acceptance carrying a claim, ordinary rejection, and an
+explicit returned fault. Its `map` transforms accepted claims; `bind` continues only after
+acceptance. The name refers to a returned protocol outcome, not a categorical terminal object.
+`TerminalOutcome` specializes this sum to path-indexed open claims, while the earlier
+`TerminalClaim` alias retains its separate optional-claim convention.
+
+`TerminalRun.closed` interprets accepted claims using the recorded path and input behavior while
+preserving rejection and the exact fault. `Terminal.ofOption` maps an absent optional claim to
+rejection. In contrast, `decodeRuntime` assigns an absent runtime result a caller-selected fault.
+These two meanings of absence are deliberately different.
+
+`Terminal.observe` completes the successful-output measure and applies that explicit decoder.
+Acceptance and rejection keep their original mass. The chosen fault receives its returned mass
+plus missing execution mass, which may represent failure or nontermination. This is a measure
+construction, not an executable recovery procedure or a fault-budget theorem.
+
 ## Concrete prefixes and available contexts
 
 `ExecutionPrefix` pairs a structural cursor with exactly the concrete oracle messages already
