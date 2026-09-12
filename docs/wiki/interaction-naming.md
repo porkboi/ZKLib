@@ -107,6 +107,19 @@ statement and observable-answer equality, without asserting honesty or relation 
 environment contains the initial handler and the messages along that branch. It does not choose
 messages for unvisited branches or assert that arbitrary structural paths are inhabited.
 
+## Sumcheck oracle roles
+
+The single-round verifier checks the sent polynomial and evaluates it for the next target. Its
+`outputOracle` instead retains the input oracle. This distinction allows a dishonest message to
+pass the local sum check while the closed output relation fails; it is essential for soundness.
+`degreeModel` interprets the degree guarantee already carried by the refined message type, and
+`honestClaim` gives the corresponding concrete claim. `projectionOracle` answers univariate round
+queries by the existing multivariate projection program.
+
+`honestRun` is an algebraic normal form; `executeCore_honest` proves the actual executor returns it
+under the input sum premise. Sampled perfect completeness additionally requires a lossless
+challenge program. These completeness theorems do not establish adversarial soundness.
+
 ## Other interaction names
 
 `RoleDecoration.toExplicitRoles` fills the implicit sender role at oracle nodes while retaining
@@ -156,6 +169,9 @@ unchanged. For named contexts and their views, replace old `tensor` uses by `dis
 | `OracleClaim`, `DataClaim` | `OpenClaim`, `ConcreteClaim` |
 | `TypeTree.sourcesAfter`, `sourcesAfter_handler` | `sourceAfter`, `sourceAfter_handler` |
 | `CoreRun.closed_eq_data_iff` | `CoreRun.closed_eq_concrete_iff` |
+| Single-round `degreeCatalog`, `honestData` | `degreeModel`, `honestClaim` |
+| Single-round `outputView`, `projectionView` | `outputOracle`, `projectionOracle` |
+| `executeSampled_measure_complete` | `executeSampled_measureCompleteness` |
 | `ProverOutputRealizes`, `proverOutputRealizes_iff` | `ConcreteClaim.closesTo`, `closesTo_iff` |
 | `ClaimSchema`, `ClaimSchema.oracle` | `ClaimFamily`, `ClaimFamily.closedOracle` |
 | Claim `rebase`, `closeWith_rebase` | `mapSource`, `closeWith_mapSource` |
