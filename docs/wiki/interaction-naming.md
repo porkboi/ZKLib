@@ -52,6 +52,27 @@ one context. `disjointUnion` combines contexts, or views over contexts, only wit
 underlying names do not overlap. `disjointUnionSourceEquiv` relates this construction to `sum` of
 the interpreted sources.
 
+## Virtual interfaces and substitution
+
+`OracleFamily` is an indexed family of realization types with explicit `interface` data. Its
+`behaviorOfRealizations` interprets those values as answers; its `asBehaviorSource` instead admits
+all deterministic handlers, including ones no realization represents. Neither injectivity nor
+surjectivity of the interpretation is assumed. Reindexing a family copies interface types and
+allows independently supplied values at repeated indices. It does not create a shared-realization
+view.
+
+`VirtualOracle srcSpec Out` supplies a program over `srcSpec` for every output query. Its `eval`
+returns output behavior, without constructing output realizations. `substSource` replaces each
+source query with a program over another signature. `mapSource` specializes this to a coherent
+`SourceHom`; `sumWeaken` includes the source signature in a larger sum. `a.subst b` substitutes
+`a`'s programs into the downstream oracle `b`; `substWithSuffix` also retains a separate suffix
+signature for downstream queries. These operations use VCVio's existing interpreter.
+
+`SemEquiv` compares answers under every deterministic source handler. It does not assert equal
+query traces, equal cost, or equivalence under stateful handlers. In particular, an unused repeated
+query can change a trace without changing deterministic answers. This semantic relation is the
+one used for the exported identity and associativity laws.
+
 ## Other interaction names
 
 `RoleDecoration.toExplicitRoles` fills the implicit sender role at oracle nodes while retaining
@@ -93,8 +114,14 @@ unchanged. For named contexts and their views, replace old `tensor` uses by `dis
 | `RoleDecoration.toRuntimeRoles` | `RoleDecoration.toExplicitRoles` |
 | `Verifier.readImpl` | `Verifier.liftAccessImpl` |
 | `Interaction.Reduction.comp`, `execute_comp` | `Interaction.Reduction.then`, `execute_then` |
+| `OracleFamily.ι`, `Obj`, `oracle` | `Index`, `Realization`, `interface` |
+| `OracleFamily.answerData`, `asSource` | `behaviorOfRealizations`, `asBehaviorSource` |
+| `VirtualOracle.mapSource` (program argument) | `VirtualOracle.substSource` |
+| `VirtualOracle.rebase` (`SourceHom` argument) | `VirtualOracle.mapSource` |
+| `VirtualOracle.tensorWeaken`, `substWith` | `sumWeaken`, `substWithSuffix` |
 
-Apply the same substitutions to associated theorem names and explicit `Tree` named arguments
+For virtual oracles, rename old `mapSource` uses to `substSource` before renaming `rebase` to
+`mapSource`. Apply the same substitutions to associated theorem names and explicit `Tree` named arguments
 (previously `Context`) in the plain reduction API. The legacy `Reduction` API outside
 `Interaction` is unchanged. File and import paths remain unchanged.
 

@@ -298,6 +298,7 @@ public import ArkLib.Interaction.Oracle.Resource
 public import ArkLib.Interaction.Oracle.Source
 public import ArkLib.Interaction.Oracle.TypeTree
 public import ArkLib.Interaction.Oracle.TypeTree.Decoration
+public import ArkLib.Interaction.Oracle.Virtual
 public import ArkLib.Interaction.Reduction
 public import ArkLib.OracleReduction.BCS.Basic
 public import ArkLib.OracleReduction.Basic
