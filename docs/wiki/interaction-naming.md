@@ -120,6 +120,13 @@ queries by the existing multivariate projection program.
 under the input sum premise. Sampled perfect completeness additionally requires a lossless
 challenge program. These completeness theorems do not establish adversarial soundness.
 
+In the one-round soundness API, `committedRun` is the normal form for a message fixed before the
+challenge. `executeCommitted_eq` relates it to actual execution. Here commitment means choosing
+the message first, not using a cryptographic commitment scheme. `executeCommitted_soundness`
+bounds accepted true outputs for a false input sum under a fresh uniform finite-field challenge;
+`executeRandomCommitment_soundness` also permits randomized, possibly failing message selection
+before that challenge. Neither theorem states multi-round or knowledge soundness.
+
 `legacy_input_iff` and `legacy_output_iff` give both directions of relation correspondence for
 arbitrary concrete claims. `legacy_honest_verifier_correspondence` is narrower: it compares honest
 executions. The legacy verifier reads the input polynomial for its next target, while the typed
@@ -177,6 +184,7 @@ unchanged. For named contexts and their views, replace old `tensor` uses by `dis
 | Single-round `degreeCatalog`, `honestData` | `degreeModel`, `honestClaim` |
 | Single-round `outputView`, `projectionView` | `outputOracle`, `projectionOracle` |
 | `executeSampled_measure_complete` | `executeSampled_measureCompleteness` |
+| Soundness `*_measure_soundness` | `*_measureSoundness` |
 | `legacy_verifier_correspondence` | `legacy_honest_verifier_correspondence` |
 | `ProverOutputRealizes`, `proverOutputRealizes_iff` | `ConcreteClaim.closesTo`, `closesTo_iff` |
 | `ClaimSchema`, `ClaimSchema.oracle` | `ClaimFamily`, `ClaimFamily.closedOracle` |
