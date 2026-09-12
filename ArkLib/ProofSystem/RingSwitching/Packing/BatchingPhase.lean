@@ -8,7 +8,6 @@ module
 public import ArkLib.ProofSystem.RingSwitching.Packing.Prelude
 public import ArkLib.ProofSystem.RingSwitching.Packing.Spec
 public import ArkLib.OracleReduction.Basic
-public import CompPoly.Fields.Binary.Tower.TensorAlgebra
 
 /-!
 # ArkLib.ProofSystem.RingSwitching.Packing.BatchingPhase
