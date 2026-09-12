@@ -120,6 +120,11 @@ queries by the existing multivariate projection program.
 under the input sum premise. Sampled perfect completeness additionally requires a lossless
 challenge program. These completeness theorems do not establish adversarial soundness.
 
+`legacy_input_iff` and `legacy_output_iff` give both directions of relation correspondence for
+arbitrary concrete claims. `legacy_honest_verifier_correspondence` is narrower: it compares honest
+executions. The legacy verifier reads the input polynomial for its next target, while the typed
+verifier reads the sent polynomial. Their arbitrary-message executions are not identified.
+
 ## Other interaction names
 
 `RoleDecoration.toExplicitRoles` fills the implicit sender role at oracle nodes while retaining
@@ -172,6 +177,7 @@ unchanged. For named contexts and their views, replace old `tensor` uses by `dis
 | Single-round `degreeCatalog`, `honestData` | `degreeModel`, `honestClaim` |
 | Single-round `outputView`, `projectionView` | `outputOracle`, `projectionOracle` |
 | `executeSampled_measure_complete` | `executeSampled_measureCompleteness` |
+| `legacy_verifier_correspondence` | `legacy_honest_verifier_correspondence` |
 | `ProverOutputRealizes`, `proverOutputRealizes_iff` | `ConcreteClaim.closesTo`, `closesTo_iff` |
 | `ClaimSchema`, `ClaimSchema.oracle` | `ClaimFamily`, `ClaimFamily.closedOracle` |
 | Claim `rebase`, `closeWith_rebase` | `mapSource`, `closeWith_mapSource` |
