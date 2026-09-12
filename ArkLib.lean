@@ -294,6 +294,7 @@ public import ArkLib.Data.Probability.Notation
 public import ArkLib.Interaction.Oracle.Access
 public import ArkLib.Interaction.Oracle.Execution
 public import ArkLib.Interaction.Oracle.Protocol
+public import ArkLib.Interaction.Oracle.Resource
 public import ArkLib.Interaction.Oracle.Source
 public import ArkLib.Interaction.Oracle.TypeTree
 public import ArkLib.Interaction.Oracle.TypeTree.Decoration
