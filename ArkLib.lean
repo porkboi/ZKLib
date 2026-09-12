@@ -292,6 +292,7 @@ public import ArkLib.Data.Probability.Instances
 public import ArkLib.Data.Probability.KoalaBear
 public import ArkLib.Data.Probability.Notation
 public import ArkLib.Interaction.Oracle.Access
+public import ArkLib.Interaction.Oracle.Claim
 public import ArkLib.Interaction.Oracle.Execution
 public import ArkLib.Interaction.Oracle.Protocol
 public import ArkLib.Interaction.Oracle.Resource

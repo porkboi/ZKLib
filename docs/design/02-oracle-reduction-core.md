@@ -34,13 +34,13 @@ structure ClaimWith (Rep : OracleFamily → Type) (Stmt : Type) (Out : OracleFam
   stmt    : Stmt
   oracles : Rep Out
 
-abbrev OracleClaim (srcSpec) Stmt Out := ClaimWith (VirtualOracle srcSpec) Stmt Out  -- open
+abbrev OpenClaim (srcSpec) Stmt Out := ClaimWith (VirtualOracle srcSpec) Stmt Out  -- open
 abbrev ClosedClaim Stmt Out          := ClaimWith OracleFamily.Behavior Stmt Out    -- closed
-abbrev DataClaim Stmt Out            := ClaimWith (fun O => ∀ i, O.Realization i) Stmt Out  -- honest data
--- HonestProverOutput = DataClaim × Witness
+abbrev ConcreteClaim Stmt Out            := ClaimWith (fun O => ∀ i, O.Realization i) Stmt Out  -- concrete realizations
+-- HonestProverOutput = ConcreteClaim × Witness
 ```
 
-Representation morphisms into behavior: `eval` (open → closed, per handler) and `OracleFamily.behaviorOfRealizations` (realizations → behavior). `ProverOutputRealizes` is the statement that the honest prover's `DataClaim` and the verifier's closed claim map to the same point — naturality, not a bespoke condition. `stmt` is produced by the verifier's own (possibly query-dependent) terminal computation; scalar outputs computed from oracle queries (sumcheck's `Tᵢ := sᵢ(rᵢ)`, STIR shift values) live in `stmt`, never in the oracle component. `stmt` is *run*-determined, not env-determined — the joint execution artifact (`03` §2) ties them; there is no theorem "`ClosedClaim` is a function of `Env`" and none should be attempted.
+Representation morphisms into behavior: `eval` (open → closed, per handler) and `OracleFamily.behaviorOfRealizations` (realizations → behavior). `ConcreteClaim.closesTo` states that interpreting a concrete claim gives exactly the specified closed claim. This is equality of statements and observable behavior; it does not assert honesty, relation membership, or execution provenance. `stmt` is produced by the verifier's own (possibly query-dependent) terminal computation; scalar outputs computed from oracle queries (sumcheck's `Tᵢ := sᵢ(rᵢ)`, STIR shift values) live in `stmt`, never in the oracle component. `stmt` is *run*-determined, not env-determined — the joint execution artifact (`03` §2) ties them; there is no theorem "`ClosedClaim` is a function of `Env`" and none should be attempted.
 
 ## 3. Core objects
 
@@ -125,7 +125,7 @@ No stored denotation, no stored coherence: `eval` *is* the denotation; smart con
 ### 3.5 Closing
 
 ```lean
-def OracleClaim.closeWith (c) (ρ : QueryImpl srcSpec Id) : ClosedClaim Stmt Out :=
+def OpenClaim.closeWith (c) (ρ : QueryImpl srcSpec Id) : ClosedClaim Stmt Out :=
   ⟨c.stmt, c.oracles.eval ρ⟩
 ```
 
@@ -161,11 +161,10 @@ Deliberately separate (not `subst`): shared-prefix products, lock-step repetitio
 ## 6. Core security shape (Δ side; games live in 03)
 
 ```lean
-structure ClaimSchema where
-  PublicCtx : Type
-  Claim     : PublicCtx → Type
+structure ClaimFamily (PublicCtx : Type) where
+  Claim : PublicCtx → Type
 
-structure Problem (S : ClaimSchema) where
+structure Problem {PublicCtx : Type} (S : ClaimFamily PublicCtx) where
   Witness        : ∀ ctx, S.Claim ctx → Type      -- claim-dependent (committed relations!)
   admissible     : ∀ ctx, S.Claim ctx → Prop
   rel            : ∀ ctx claim, Witness ctx claim → Prop
@@ -175,9 +174,9 @@ def Problem.language (P) (ctx) (claim) : Prop := ∃ w, P.rel ctx claim w
 abbrev Relation (S) := { P : Problem S // P.admissible = fun _ _ => True }  -- promise-free
 ```
 
-(Repair C4: one object; `Relation` is the degenerate case; oracle schemas are the specialization `Claim ctx := ClosedClaim (Stmt ctx) (Out ctx)`.) Relations receive public context, a **closed claim**, and a witness — never the environment, the plan, or provenance. `admissible` covers promises, well-formedness, size bounds, and accumulator invariants (input promise / output-admissibility obligation / inductive invariant are different *proof roles* of the same mechanism, kept as named aliases). Impl-facing predicates are **generated adapters** by evaluation + closing; legacy handwritten predicates owe a two-way equivalence proof, per protocol (repair C6 — there is no generic bridge, and the legacy namespace survives until every consumer is bridged).
+(Repair C4: one object; `Relation` is the degenerate case; closed oracle claim families are the specialization `Claim ctx := ClosedClaim (Stmt ctx) (Out ctx)`.) Relations receive public context, a **closed claim**, and a witness — never the environment, the plan, or provenance. `admissible` covers promises, well-formedness, size bounds, and accumulator invariants (input promise / output-admissibility obligation / inductive invariant are different *proof roles* of the same mechanism, kept as named aliases). Impl-facing predicates are **generated adapters** by evaluation + closing; legacy handwritten predicates owe a two-way equivalence proof, per protocol (repair C6 — there is no generic bridge, and the legacy namespace survives until every consumer is bridged).
 
-Completeness = statement agreement + `ProverOutputRealizes` + `rel_out` on the closed claim; the old `OutputRealizes` is a derived interpreter lemma; literal data equality only under `Faithful` interfaces. Soundness/KS/RBR games, extractors, outcomes (`accept/reject/fault`), and error accounting are `03`'s subject — they require the execution layer.
+Completeness requires `ConcreteClaim.closesTo` (including statement agreement) and `rel_out` on the closed claim; the old `OutputRealizes` is a derived interpreter lemma; literal data equality only under `Faithful` interfaces. Soundness/KS/RBR games, extractors, outcomes (`accept/reject/fault`), and error accounting are `03`'s subject — they require the execution layer.
 
 ## 7. Materialization
 

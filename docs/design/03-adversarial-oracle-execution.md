@@ -31,7 +31,7 @@ structure CoreRun (path : Oracle.TypeTree.BranchPath (Context shared)) where
   msgs       : Oracle.TypeTree.OracleMessagesAt (Context shared) path
     -- prover oracle payloads
   inputEnv   : InputImpl shared                             -- the game's input behavior
-  outcome    : Terminal (OracleClaim (srcSpecAt shared path) (Stmt path) (Out path)) Fault
+  outcome    : Terminal (OpenClaim (srcSpecAt shared path) (Stmt path) (Out path)) Fault
   proverOut  : ProverPayload path
 
 def executeCore … : OracleComp Γ.Surface ((path : _) × CoreRun path)

@@ -73,6 +73,23 @@ query traces, equal cost, or equivalence under stateful handlers. In particular,
 query can change a trace without changing deterministic answers. This semantic relation is the
 one used for the exported identity and associativity laws.
 
+## Claims and relations
+
+`ClaimWith` pairs a public statement with an explicit representation of its oracle component.
+`OpenClaim` carries query programs awaiting a handler; `ClosedClaim` carries observable behavior;
+`ConcreteClaim` carries realizations interpreted by the declared interfaces. Closing an open claim
+uses `closeWith`; interpreting a concrete claim uses `toClosed`. Neither operation checks relation
+membership or proves that its inputs came from a protocol execution.
+
+`ConcreteClaim.closesTo` says exactly that `toClosed` equals the specified closed claim. Hidden
+representation tags and different programs can disappear under interpretation. In particular,
+concrete realizations need not be honest, and an open claim need not be accepted.
+
+`ClaimFamily` is a dependent family of claim types over a public context. `closedOracle` specializes
+it to closed oracle claims. `Problem` adds claim-dependent witnesses, admissibility, and a relation
+that entails admissibility. `language` existentially quantifies the witness. `Relation` removes the
+admissibility restriction; it does not assert that every claim has a witness.
+
 ## Other interaction names
 
 `RoleDecoration.toExplicitRoles` fills the implicit sender role at oracle nodes while retaining
@@ -119,6 +136,11 @@ unchanged. For named contexts and their views, replace old `tensor` uses by `dis
 | `VirtualOracle.mapSource` (program argument) | `VirtualOracle.substSource` |
 | `VirtualOracle.rebase` (`SourceHom` argument) | `VirtualOracle.mapSource` |
 | `VirtualOracle.tensorWeaken`, `substWith` | `sumWeaken`, `substWithSuffix` |
+| `OracleClaim`, `DataClaim` | `OpenClaim`, `ConcreteClaim` |
+| `ProverOutputRealizes`, `proverOutputRealizes_iff` | `ConcreteClaim.closesTo`, `closesTo_iff` |
+| `ClaimSchema`, `ClaimSchema.oracle` | `ClaimFamily`, `ClaimFamily.closedOracle` |
+| Claim `rebase`, `closeWith_rebase` | `mapSource`, `closeWith_mapSource` |
+| Claim `substWith`, `closeWith_substWith` | `substWithSuffix`, `closeWith_substWithSuffix` |
 
 For virtual oracles, rename old `mapSource` uses to `substSource` before renaming `rebase` to
 `mapSource`. Apply the same substitutions to associated theorem names and explicit `Tree` named arguments
