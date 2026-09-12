@@ -155,6 +155,21 @@ closed claim to the second and skips the second after rejection. Sampled equatio
 first-then-second challenge order. Completeness transports the multivariate relation through both
 rounds; it does not compose the one-round soundness error.
 
+## Arbitrary multivariate rounds
+
+`MultivariateRound.roundStages` packages any finite interval of multivariate Sumcheck rounds as an
+`OrderedExecution`. Each challenge program receives the current public round statement; the
+accepted closed claim, including its oracle behavior, becomes the next stage's input. Rejection
+stops later challenge programs. `executeRoundsSampled` removes only the unit private state from the
+ordered executor's result.
+
+The honest-execution theorem transports one fixed polynomial relation through every selected
+round. Its evaluation corollary additionally requires the interval to finish all variables. The
+perfect-completeness theorem permits history-dependent challenge programs but assumes zero failure
+probability for every round and public history; the measure and uniform theorems specialize that
+assumption. These results do not establish arbitrary-round soundness, extraction, transcript
+privacy, or independence for the general sampled challenges.
+
 ## Other interaction names
 
 `RoleDecoration.toExplicitRoles` fills the implicit sender role at oracle nodes while retaining
@@ -208,6 +223,9 @@ unchanged. For named contexts and their views, replace old `tensor` uses by `dis
 | Single-round `outputView`, `projectionView` | `outputOracle`, `projectionOracle` |
 | Multivariate-round `family`, `outputView` | `polynomialFamily`, `outputOracle` |
 | `executeSampled_measure_complete` | `executeSampled_measureCompleteness` |
+| `executeRoundsSampled_perfect_completeness` | `executeRoundsSampled_perfectCompleteness` |
+| `executeRoundsSampled_measure_complete` | `executeRoundsSampled_measureCompleteness` |
+| `executeRounds_uniform_measure_complete` | `executeRounds_uniform_measureCompleteness` |
 | Soundness `*_measure_soundness` | `*_measureSoundness` |
 | `legacy_verifier_correspondence` | `legacy_honest_verifier_correspondence` |
 | `ProverOutputRealizes`, `proverOutputRealizes_iff` | `ConcreteClaim.closesTo`, `closesTo_iff` |
